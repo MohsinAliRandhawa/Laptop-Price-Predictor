@@ -189,6 +189,7 @@ hr {
 #  LOAD MODEL BUNDLE
 # ──────────────────────────────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="Loading model...")
+#hello
 def load_bundle(path="laptop_price_model.pkl"):
     with open(path, "rb") as f:
         return pickle.load(f)
