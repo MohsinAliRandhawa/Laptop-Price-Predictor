@@ -1,0 +1,4 @@
+/.venv
+/data.csv
+/Run App.bat
+/training.py
