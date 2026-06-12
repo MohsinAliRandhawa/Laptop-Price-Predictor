@@ -21,261 +21,281 @@ st.set_page_config(
 # ──────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-/* ── Google Font ── */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* ── Google Font: Plus Jakarta Sans ── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] {
-    font-family: 'Outfit', sans-serif;
-    color: #e2e8f0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #ededed;
 }
 
-/* ── Root background ── */
+/* ── Animated Mesh Background ── */
 .stApp {
-    background: #050505 !important;
+    background-color: #000000 !important;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(29, 78, 216, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(225, 29, 72, 0.1) 0px, transparent 50%);
+    background-size: 200% 200%;
+    animation: meshFlow 20s ease infinite;
+}
+@keyframes meshFlow {
+    0% { background-position: 0% 0%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
 }
 
-/* Add an absolute aurora glow behind the main content */
-.stApp::before {
-    content: '';
-    position: fixed;
-    top: -20%; left: -10%;
-    width: 60vw; height: 60vw;
-    background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, rgba(0,0,0,0) 60%);
-    z-index: -1;
-    pointer-events: none;
-}
-.stApp::after {
-    content: '';
-    position: fixed;
-    bottom: -20%; right: -10%;
-    width: 70vw; height: 70vw;
-    background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, rgba(0,0,0,0) 60%);
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* ── Hero banner ── */
+/* ── Hero banner (Linear Style) ── */
 .hero {
-    background: rgba(15, 15, 17, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.6);
+    background: rgba(9, 9, 11, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.8);
     border-radius: 24px;
-    padding: 3rem 2rem;
-    margin-bottom: 2.5rem;
+    padding: 3.5rem 2rem;
+    margin-bottom: 3rem;
     text-align: center;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     position: relative;
     overflow: hidden;
 }
 
-/* Top accent line on hero */
+/* Animated Top Highlight */
 .hero::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(45,212,191,0.5), rgba(139,92,246,0.5), transparent);
+    top: 0; left: -100%; right: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    animation: sweep 4s infinite linear;
+}
+@keyframes sweep {
+    0% { left: -100%; right: 100%; }
+    100% { left: 100%; right: -100%; }
+}
+
+/* Badge above Title */
+.hero-badge {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #a1a1aa;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px rgba(255,255,255,0.05);
 }
 
 .hero h1 {
-    font-size: 3.2rem;
+    font-size: 4rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #f8fafc 20%, #94a3b8 100%);
+    letter-spacing: -0.04em;
+    background: linear-gradient(to right, #ffffff 20%, #71717a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.1;
 }
 .hero p {
-    color: #64748b;
-    font-size: 1.15rem;
+    color: #a1a1aa;
+    font-size: 1.2rem;
     font-weight: 400;
     margin: 0;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
 }
 
 /* ── Section cards ── */
 .card {
-    background: rgba(18, 18, 20, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: rgba(9, 9, 11, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
-    padding: 1.8rem;
+    padding: 2rem;
     margin-bottom: 1.5rem;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
 }
 .card:hover {
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 40px rgba(255,255,255,0.02);
 }
 .card-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #8b5cf6;
-    margin-bottom: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    opacity: 0.9;
 }
 
 /* ── Labels ── */
 label, .stSelectbox label, .stSlider label, .stRadio label {
-    color: #94a3b8 !important;
+    color: #a1a1aa !important;
     font-weight: 500 !important;
     font-size: 0.85rem !important;
-    letter-spacing: 0.02em !important;
+    letter-spacing: -0.01em !important;
 }
 
 /* ── Selectbox / input styling ── */
 .stSelectbox > div > div,
 .stNumberInput > div > div > input {
-    background: rgba(255,255,255,0.02) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
     border-radius: 12px !important;
-    color: #f8fafc !important;
+    color: #ffffff !important;
     font-size: 0.95rem !important;
     transition: all 0.2s ease;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3) !important;
 }
 .stSelectbox > div > div:hover,
 .stNumberInput > div > div > input:hover {
-    border-color: rgba(139,92,246,0.5) !important;
-    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(255,255,255,0.25) !important;
+    background: rgba(255,255,255,0.05) !important;
 }
 .stSelectbox > div > div:focus,
 .stSelectbox > div > div[data-baseweb="select"]:focus-within {
-    box-shadow: 0 0 0 1px #8b5cf6 !important;
-    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 1px #ffffff !important;
+    border-color: #ffffff !important;
 }
 
-/* ── Dropdown Menu Styling (Tricky in Streamlit but targeting general baseWeb elements) ── */
+/* Dropdown Menu */
 ul[data-baseweb="menu"] {
-    background-color: #121214 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: #09090b !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
 }
 li[data-baseweb="menu-item"] {
-    color: #e2e8f0 !important;
+    color: #e4e4e7 !important;
+    font-size: 0.9rem !important;
 }
 li[data-baseweb="menu-item"]:hover {
-    background-color: rgba(139,92,246,0.15) !important;
+    background-color: rgba(255,255,255,0.1) !important;
 }
 
 /* ── Slider ── */
 .stSlider > div > div > div > div {
-    background: linear-gradient(90deg, #2dd4bf, #8b5cf6) !important;
+    background: #ffffff !important;
 }
 
-/* ── Predict button ── */
+/* ── Predict button (Cinematic Vercel Style) ── */
 .stButton > button {
     width: 100%;
     background: #ffffff !important;
-    color: #050505 !important;
-    font-size: 1.05rem;
+    color: #000000 !important;
+    font-size: 1.1rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    padding: 0.9rem 1.5rem;
+    letter-spacing: -0.02em;
+    padding: 1rem 1.5rem;
     border: 1px solid #ffffff !important;
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 1rem;
-    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 1.5rem;
+    box-shadow: 0 0 20px rgba(255,255,255,0.15);
 }
 .stButton > button:hover {
-    background: transparent !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 30px rgba(139,92,246,0.4);
-    border-color: rgba(139,92,246,0.8) !important;
-    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(255,255,255,0.3);
+    transform: scale(1.02);
 }
 .stButton > button:active {
-    transform: translateY(1px);
+    transform: scale(0.98);
 }
 
-/* ── Result box ── */
+/* ── Result box (Holographic Card) ── */
 .result-box {
-    background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%);
-    border: 1px solid rgba(139,92,246,0.3);
+    background: radial-gradient(circle at top, rgba(24, 24, 27, 0.8) 0%, rgba(9, 9, 11, 0.9) 100%);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 24px;
-    padding: 3rem 2rem;
+    padding: 4rem 2rem;
     text-align: center;
     margin-top: 2rem;
     position: relative;
     overflow: hidden;
-    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+    animation: zoomFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1);
 }
+/* Glowing orb inside result box */
 .result-box::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(45,212,191,0.8), rgba(139,92,246,0.8), transparent);
+    top: -50%; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 70%);
+    pointer-events: none;
 }
 .result-label {
-    color: #94a3b8;
-    font-size: 0.8rem;
+    color: #a1a1aa;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
 }
 .result-price {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #2dd4bf 0%, #8b5cf6 50%, #f472b6 100%);
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.1;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 4px 12px rgba(139,92,246,0.2));
+    filter: drop-shadow(0 4px 20px rgba(255,255,255,0.15));
 }
 .result-range {
-    color: #64748b;
-    font-size: 0.85rem;
+    color: #71717a;
+    font-size: 0.9rem;
     font-weight: 500;
-    margin-top: 0.8rem;
+    margin-top: 1rem;
+    letter-spacing: -0.01em;
 }
 
 /* ── Feature pill ── */
 .pill {
     display: inline-block;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 999px;
-    padding: 0.3rem 0.9rem;
-    font-size: 0.75rem;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 0.05em;
-    color: #f8fafc;
-    margin: 0.2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    margin: 0.25rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* ── Divider ── */
 hr {
-    border-color: rgba(255,255,255,0.05);
-    margin: 3rem 0;
+    border-color: rgba(255,255,255,0.08);
+    margin: 4rem 0;
 }
 
 /* ── Animations ── */
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0);    }
+@keyframes zoomFade {
+    0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ── Hide Streamlit branding ── */
+/* ── Hide Streamlit branding & fix layout ── */
 #MainMenu, header, footer { visibility: hidden !important; }
 .stApp > header { display: none !important; }
-
-/* ── Reduce main padding ── */
 .block-container {
-    padding-top: 2rem !important;
-    padding-bottom: 2rem !important;
-    max-width: 1000px !important;
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+    max-width: 1050px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -447,8 +467,9 @@ BRAND_RAM_MAP = {
 # ──────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
-    <h1>💻 Laptop Price Predictor</h1>
-    <p>Configure your ideal laptop below and get an AI-powered price estimate instantly.</p>
+    <div class="hero-badge">⚡ AI-Powered Pricing Engine</div>
+    <h1>Laptop Price Predictor</h1>
+    <p>Configure your ideal machine below and let our ML model compute its real-time market value.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -645,13 +666,13 @@ with col_right:
     # ── Placeholder before prediction ──
     else:
         st.markdown("""
-        <div style="margin-top:1.5rem; text-align:center; padding:3rem 1rem;
-                    border:1px dashed rgba(139,92,246,0.3); border-radius:24px;
-                    background: rgba(15, 15, 17, 0.4);
-                    color:#64748b; backdrop-filter: blur(12px);">
-            <div style="font-size:3rem; margin-bottom:1rem; opacity:0.8;">✨</div>
-            <div style="font-size:0.95rem; font-weight:500; letter-spacing:0.02em;">
-                Configure the specs on the left<br>then click <b style="color:#f8fafc">Predict Price</b>
+        <div style="margin-top:1.5rem; text-align:center; padding:4rem 1rem;
+                    border:1px dashed rgba(255,255,255,0.15); border-radius:24px;
+                    background: rgba(9, 9, 11, 0.4);
+                    color:#a1a1aa; backdrop-filter: blur(20px);">
+            <div style="font-size:3rem; margin-bottom:1.5rem; opacity:0.9;">✨</div>
+            <div style="font-size:1.05rem; font-weight:500; letter-spacing:0.02em;">
+                Configure the specs on the left<br>then click <b style="color:#ffffff">Predict Price</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
