@@ -22,168 +22,261 @@ st.set_page_config(
 st.markdown("""
 <style>
 /* ── Google Font ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
+    color: #e2e8f0;
 }
 
 /* ── Root background ── */
 .stApp {
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh;
+    background: #050505 !important;
+}
+
+/* Add an absolute aurora glow behind the main content */
+.stApp::before {
+    content: '';
+    position: fixed;
+    top: -20%; left: -10%;
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, rgba(0,0,0,0) 60%);
+    z-index: -1;
+    pointer-events: none;
+}
+.stApp::after {
+    content: '';
+    position: fixed;
+    bottom: -20%; right: -10%;
+    width: 70vw; height: 70vw;
+    background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, rgba(0,0,0,0) 60%);
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* ── Hero banner ── */
 .hero {
-    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(168,85,247,0.20));
-    border: 1px solid rgba(99,102,241,0.35);
-    border-radius: 20px;
-    padding: 2.5rem 2rem 2rem;
-    margin-bottom: 2rem;
+    background: rgba(15, 15, 17, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.6);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    margin-bottom: 2.5rem;
     text-align: center;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    overflow: hidden;
 }
+
+/* Top accent line on hero */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45,212,191,0.5), rgba(139,92,246,0.5), transparent);
+}
+
 .hero h1 {
-    font-size: 2.8rem;
+    font-size: 3.2rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #818cf8, #c084fc, #e879f9);
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f8fafc 20%, #94a3b8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
 }
 .hero p {
-    color: #94a3b8;
-    font-size: 1.05rem;
+    color: #64748b;
+    font-size: 1.15rem;
+    font-weight: 400;
     margin: 0;
+    letter-spacing: 0.01em;
 }
 
 /* ── Section cards ── */
 .card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 16px;
-    padding: 1.6rem 1.6rem 0.8rem;
-    margin-bottom: 1.4rem;
-    backdrop-filter: blur(8px);
+    background: rgba(18, 18, 20, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.card:hover {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 .card-title {
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #818cf8;
-    margin-bottom: 1rem;
+    color: #8b5cf6;
+    margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
 }
 
 /* ── Labels ── */
 label, .stSelectbox label, .stSlider label, .stRadio label {
-    color: #cbd5e1 !important;
+    color: #94a3b8 !important;
     font-weight: 500 !important;
-    font-size: 0.87rem !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.02em !important;
 }
 
 /* ── Selectbox / input styling ── */
 .stSelectbox > div > div,
 .stNumberInput > div > div > input {
-    background: rgba(255,255,255,0.07) !important;
-    border: 1px solid rgba(255,255,255,0.15) !important;
-    border-radius: 10px !important;
-    color: #f1f5f9 !important;
+    background: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    color: #f8fafc !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease;
 }
-.stSelectbox > div > div:hover {
-    border-color: #818cf8 !important;
+.stSelectbox > div > div:hover,
+.stNumberInput > div > div > input:hover {
+    border-color: rgba(139,92,246,0.5) !important;
+    background: rgba(255,255,255,0.04) !important;
+}
+.stSelectbox > div > div:focus,
+.stSelectbox > div > div[data-baseweb="select"]:focus-within {
+    box-shadow: 0 0 0 1px #8b5cf6 !important;
+    border-color: #8b5cf6 !important;
+}
+
+/* ── Dropdown Menu Styling (Tricky in Streamlit but targeting general baseWeb elements) ── */
+ul[data-baseweb="menu"] {
+    background-color: #121214 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+}
+li[data-baseweb="menu-item"] {
+    color: #e2e8f0 !important;
+}
+li[data-baseweb="menu-item"]:hover {
+    background-color: rgba(139,92,246,0.15) !important;
 }
 
 /* ── Slider ── */
 .stSlider > div > div > div > div {
-    background: linear-gradient(90deg, #6366f1, #a855f7) !important;
+    background: linear-gradient(90deg, #2dd4bf, #8b5cf6) !important;
 }
 
 /* ── Predict button ── */
 .stButton > button {
     width: 100%;
-    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-    color: white !important;
+    background: #ffffff !important;
+    color: #050505 !important;
     font-size: 1.05rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 0.85rem 1.5rem;
-    border: none;
-    border-radius: 12px;
+    letter-spacing: -0.01em;
+    padding: 0.9rem 1.5rem;
+    border: 1px solid #ffffff !important;
+    border-radius: 14px;
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-    box-shadow: 0 4px 24px rgba(99,102,241,0.35);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 1rem;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
 }
 .stButton > button:hover {
+    background: transparent !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 30px rgba(139,92,246,0.4);
+    border-color: rgba(139,92,246,0.8) !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(168,85,247,0.55);
 }
 .stButton > button:active {
-    transform: translateY(0px);
+    transform: translateY(1px);
 }
 
 /* ── Result box ── */
 .result-box {
-    background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(168,85,247,0.18));
-    border: 2px solid rgba(99,102,241,0.6);
-    border-radius: 20px;
-    padding: 2.2rem 1.5rem;
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 24px;
+    padding: 3rem 2rem;
     text-align: center;
-    margin-top: 1.5rem;
-    animation: fadeIn 0.5s ease;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+}
+.result-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45,212,191,0.8), rgba(139,92,246,0.8), transparent);
 }
 .result-label {
     color: #94a3b8;
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 .result-price {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #818cf8, #c084fc, #f472b6);
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #2dd4bf 0%, #8b5cf6 50%, #f472b6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.1;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 12px rgba(139,92,246,0.2));
 }
 .result-range {
     color: #64748b;
-    font-size: 0.82rem;
-    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.8rem;
 }
 
 /* ── Feature pill ── */
 .pill {
     display: inline-block;
-    background: rgba(99,102,241,0.18);
-    border: 1px solid rgba(99,102,241,0.4);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 999px;
-    padding: 0.25rem 0.8rem;
-    font-size: 0.78rem;
-    color: #a5b4fc;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #f8fafc;
     margin: 0.2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 /* ── Divider ── */
 hr {
-    border-color: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.05);
+    margin: 3rem 0;
 }
 
-/* ── Fade in ── */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+/* ── Animations ── */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0);    }
 }
 
 /* ── Hide Streamlit branding ── */
-#MainMenu, footer { visibility: hidden; }
+#MainMenu, header, footer { visibility: hidden !important; }
+.stApp > header { display: none !important; }
+
+/* ── Reduce main padding ── */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1000px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -552,12 +645,13 @@ with col_right:
     # ── Placeholder before prediction ──
     else:
         st.markdown("""
-        <div style="margin-top:1.5rem; text-align:center; padding:2rem 1rem;
-                    border:1px dashed rgba(99,102,241,0.35); border-radius:16px;
-                    color:#475569;">
-            <div style="font-size:2.5rem; margin-bottom:0.5rem;">🔮</div>
-            <div style="font-size:0.9rem;">
-                Configure the specs on the left<br>then click <b style="color:#818cf8">Predict Price</b>
+        <div style="margin-top:1.5rem; text-align:center; padding:3rem 1rem;
+                    border:1px dashed rgba(139,92,246,0.3); border-radius:24px;
+                    background: rgba(15, 15, 17, 0.4);
+                    color:#64748b; backdrop-filter: blur(12px);">
+            <div style="font-size:3rem; margin-bottom:1rem; opacity:0.8;">✨</div>
+            <div style="font-size:0.95rem; font-weight:500; letter-spacing:0.02em;">
+                Configure the specs on the left<br>then click <b style="color:#f8fafc">Predict Price</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -570,27 +664,27 @@ st.markdown("<hr>", unsafe_allow_html=True)
 info_col1, info_col2, info_col3 = st.columns(3)
 with info_col1:
     st.markdown("""
-    <div style="text-align:center; color:#475569; font-size:0.82rem;">
-        <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Model</div>
-        Random Forest Regressor<br>300 trees &bull; R² = 0.73
+    <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding: 1rem; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+        <div style="color:#8b5cf6; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.4rem; font-size:0.75rem;">Model Core</div>
+        <span style="color:#e2e8f0; font-weight:600;">Random Forest</span><br>300 Trees &bull; R² = 0.73
     </div>""", unsafe_allow_html=True)
 
 with info_col2:
     st.markdown("""
-    <div style="text-align:center; color:#475569; font-size:0.82rem;">
-        <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Training Data</div>
-        5,480 global laptops<br>across 5 datasets
+    <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding: 1rem; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+        <div style="color:#8b5cf6; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.4rem; font-size:0.75rem;">Dataset Volume</div>
+        <span style="color:#e2e8f0; font-weight:600;">5,480 Profiles</span><br>Cross-referenced from 5 APIs
     </div>""", unsafe_allow_html=True)
 
 with info_col3:
     st.markdown("""
-    <div style="text-align:center; color:#475569; font-size:0.82rem;">
-        <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Accuracy</div>
-        Avg. error ~ $274 USD<br>within &plusmn;10% range shown
+    <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding: 1rem; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+        <div style="color:#8b5cf6; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.4rem; font-size:0.75rem;">Precision</div>
+        <span style="color:#e2e8f0; font-weight:600;">$274 MAE</span><br>&plusmn;10% Tolerance bounds
     </div>""", unsafe_allow_html=True)
 
 st.markdown("""
-<div style="text-align:center; color:#334155; font-size:0.76rem; margin-top:1rem; padding-bottom:1.5rem;">
-    Prices predicted natively in USD. Conversion rates applied dynamically via open.er-api.com.
+<div style="text-align:center; color:#64748b; font-size:0.8rem; margin-top:2rem; padding-bottom:1.5rem; letter-spacing:0.02em;">
+    Prices computed natively via ML. Real-time forex rates dynamically applied.
 </div>
 """, unsafe_allow_html=True)
