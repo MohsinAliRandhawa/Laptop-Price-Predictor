@@ -218,27 +218,24 @@ def predict_price(sample: dict) -> float:
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_live_rates():
     """
-    Fetch live INR -> PKR and INR -> USD rates from open.er-api.com.
+    Fetch live USD -> PKR rate from open.er-api.com.
     Falls back to hardcoded rates if internet/API is unavailable.
-    Returns: (pkr_rate, usd_rate, fetched_at, is_live)
+    Returns: (usd_to_pkr, fetched_at, is_live)
     """
-    FALLBACK_PKR = 3.52
-    FALLBACK_USD = 0.012
+    FALLBACK_PKR = 280.0
     try:
         resp = requests.get(
-            "https://open.er-api.com/v6/latest/INR",
+            "https://open.er-api.com/v6/latest/USD",
             timeout=5
         )
         data = resp.json()
         if data.get("result") == "success":
             pkr = data["rates"]["PKR"]
-            usd = data["rates"]["USD"]
             fetched_at = datetime.utcnow().strftime("%d %b %Y, %H:%M UTC")
-            return pkr, usd, fetched_at, True
+            return pkr, fetched_at, True
     except Exception:
         pass
-    # Fallback if API fails
-    return FALLBACK_PKR, FALLBACK_USD, "Unavailable (using fallback)", False
+    return FALLBACK_PKR, "Unavailable (using fallback)", False
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  STATIC OPTION LISTS  (derived from training data knowledge)
@@ -247,33 +244,89 @@ BRANDS = ["Acer", "Apple", "Asus", "Dell", "HP", "Infinix",
           "Lenovo", "MSI", "Samsung", "Other"]
 
 RAM_OPTIONS     = [4, 8, 16, 32, 64]          # GB
-RAM_TYPES       = ["DDR3", "DDR4", "DDR5", "LPDDR4", "LPDDR4X", "LPDDR5", "LPDDR5X", "Unified"]
-STORAGE_OPTIONS = [32, 64, 128, 256, 512, 1024, 2048]  # GB (1024=1TB, 2048=2TB)
+STORAGE_OPTIONS = [32, 64, 128, 256, 512, 1024, 2048]  # GB
 STORAGE_LABELS  = {32:"32 GB", 64:"64 GB", 128:"128 GB", 256:"256 GB",
                    512:"512 GB", 1024:"1 TB", 2048:"2 TB"}
 STORAGE_TYPES   = ["SSD", "Hard-Disk"]
 DISPLAY_SIZES   = [11.6, 13.3, 13.4, 13.6, 14.0, 15.3, 15.6, 16.0, 16.1, 17.3]
 RESOLUTIONS     = {
-    "1366 × 768  (HD)"       : (1366, 768),
-    "1920 × 1080 (FHD)"      : (1920, 1080),
-    "1920 × 1200 (FHD+)"     : (1920, 1200),
-    "2160 × 1440 (2K)"       : (2160, 1440),
-    "2560 × 1440 (QHD)"      : (2560, 1440),
-    "2560 × 1600 (QHD+)"     : (2560, 1600),
-    "2880 × 1800 (3K)"       : (2880, 1800),
-    "2880 × 1864 (3K)"       : (2880, 1864),
-    "3200 × 2000 (3.2K)"     : (3200, 2000),
-    "3840 × 2400 (4K)"       : (3840, 2400),
+    "1366 x 768  (HD)"       : (1366, 768),
+    "1920 x 1080 (FHD)"      : (1920, 1080),
+    "1920 x 1200 (FHD+)"     : (1920, 1200),
+    "2160 x 1440 (2K)"       : (2160, 1440),
+    "2560 x 1440 (QHD)"      : (2560, 1440),
+    "2560 x 1600 (QHD+)"     : (2560, 1600),
+    "2880 x 1800 (3K)"       : (2880, 1800),
+    "2880 x 1864 (3K)"       : (2880, 1864),
+    "3200 x 2000 (3.2K)"     : (3200, 2000),
+    "3840 x 2400 (4K)"       : (3840, 2400),
 }
-GPU_VRAM_OPTIONS = {
-    "Integrated (0 GB)"  : 0,
-    "2 GB Dedicated"     : 2,
-    "4 GB Dedicated"     : 4,
-    "6 GB Dedicated"     : 6,
-    "8 GB Dedicated"     : 8,
-    "16 GB Dedicated"    : 16,
+
+# CPU options: label -> (processor_gen, cpu_cores)
+CPU_OPTIONS = {
+    "Intel Celeron N-Series (2 Cores)":        (0,  2),
+    "Intel Core i3 - 11th Gen (4 Cores)":      (11, 4),
+    "Intel Core i3 - 12th Gen (6 Cores)":      (12, 6),
+    "Intel Core i3 - 13th Gen (6 Cores)":      (13, 6),
+    "Intel Core i5 - 11th Gen (4 Cores)":      (11, 4),
+    "Intel Core i5 - 12th Gen (8 Cores)":      (12, 8),
+    "Intel Core i5 - 13th Gen (8 Cores)":      (13, 8),
+    "Intel Core i7 - 11th Gen (8 Cores)":      (11, 8),
+    "Intel Core i7 - 12th Gen (10 Cores)":     (12, 10),
+    "Intel Core i7 - 13th Gen (10 Cores)":     (13, 10),
+    "Intel Core i9 - 13th Gen (14 Cores)":     (13, 14),
+    "Intel Core i9 - 13th Gen HX (24 Cores)": (13, 24),
+    "AMD Athlon (2 Cores, Entry)":             (0,  2),
+    "AMD Ryzen 3 - 5th Gen (4 Cores)":         (5,  4),
+    "AMD Ryzen 3 - 7th Gen (4 Cores)":         (7,  4),
+    "AMD Ryzen 5 - 5th Gen (6 Cores)":         (5,  6),
+    "AMD Ryzen 5 - 6th Gen (6 Cores)":         (6,  6),
+    "AMD Ryzen 5 - 7th Gen (6 Cores)":         (7,  6),
+    "AMD Ryzen 7 - 5th Gen (8 Cores)":         (5,  8),
+    "AMD Ryzen 7 - 6th Gen (8 Cores)":         (6,  8),
+    "AMD Ryzen 7 - 7th Gen (8 Cores)":         (7,  8),
+    "AMD Ryzen 9 - 7th Gen (16 Cores)":        (7, 16),
+    "Apple M1 (8 Cores)":                      (0,  8),
+    "Apple M2 (8 Cores)":                      (0,  8),
+    "Apple M2 Pro (12 Cores)":                 (0, 12),
+    "Apple Intel Core i9 9th Gen (8 Cores)":  (9,  8),
 }
-OS_OPTIONS = ["Windows 11", "Windows 10", "macOS", "Chrome OS", "Android", "Other"]
+
+# GPU options: label -> (vram_gb, has_dedicated)
+GPU_OPTIONS_DEFAULT = {
+    "Integrated Graphics":                     (0,  0),
+    "NVIDIA GeForce GTX 1650 (4 GB)":          (4,  1),
+    "NVIDIA GeForce RTX 2050 (4 GB)":          (4,  1),
+    "NVIDIA GeForce RTX 3050 (4 GB)":          (4,  1),
+    "NVIDIA GeForce RTX 3050 (6 GB)":          (6,  1),
+    "NVIDIA GeForce RTX 3050 Ti (4 GB)":       (4,  1),
+    "NVIDIA GeForce RTX 3070 Ti (8 GB)":       (8,  1),
+    "NVIDIA GeForce RTX 4050 (6 GB)":          (6,  1),
+    "NVIDIA GeForce RTX 4060 (8 GB)":          (8,  1),
+    "NVIDIA GeForce RTX 4070 (8 GB)":          (8,  1),
+    "NVIDIA GeForce RTX 4090 (16 GB)":         (16, 1),
+    "AMD Radeon RX 6500M (4 GB)":              (4,  1),
+    "AMD Radeon RX 6650M (8 GB)":              (8,  1),
+}
+
+GPU_OPTIONS_APPLE = {
+    "Apple Integrated GPU (7-Core)":           (0,  0),
+    "Apple Integrated GPU (8-Core)":           (0,  0),
+    "Apple Integrated GPU (10-Core)":          (0,  0),
+    "AMD Radeon Pro 5500M (4 GB)":             (4,  1),
+}
+
+# Brand-specific OS filter
+BRAND_OS_MAP = {
+    "Apple":   ["macOS"],
+    "default": ["Windows 11", "Windows 10", "Chrome OS", "Other"],
+}
+
+# Brand-specific RAM type filter
+BRAND_RAM_MAP = {
+    "Apple":   ["Unified", "LPDDR5"],
+    "default": ["DDR4", "DDR5", "LPDDR4", "LPDDR4X", "LPDDR5", "LPDDR5X", "DDR3"],
+}
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  HERO HEADER
@@ -298,7 +351,11 @@ with col_left:
 
     brand = st.selectbox("Brand", BRANDS, index=BRANDS.index("Asus"))
 
-    os_family = st.selectbox("Operating System", OS_OPTIONS, index=0)
+    # Filter options based on selected brand
+    os_opts    = BRAND_OS_MAP.get(brand, BRAND_OS_MAP["default"])
+    ram_t_opts = BRAND_RAM_MAP.get(brand, BRAND_RAM_MAP["default"])
+
+    os_family = st.selectbox("Operating System", os_opts, index=0)
 
     warranty = st.selectbox("Warranty (Years)", [1, 2, 3], index=0,
                              format_func=lambda x: f"{x} Year{'s' if x > 1 else ''}")
@@ -311,7 +368,7 @@ with col_left:
     ram_gb = st.selectbox("RAM", RAM_OPTIONS, index=2,
                            format_func=lambda x: f"{x} GB")
 
-    ram_type = st.selectbox("RAM Type", RAM_TYPES, index=RAM_TYPES.index("DDR5"))
+    ram_type = st.selectbox("RAM Type", ram_t_opts, index=0)
 
     storage_val = st.selectbox("Storage Capacity", STORAGE_OPTIONS, index=4,
                                 format_func=lambda x: STORAGE_LABELS[x])
@@ -326,12 +383,13 @@ with col_left:
 with col_mid:
     st.markdown('<div class="card"><div class="card-title">⚡ &nbsp;Processor</div>', unsafe_allow_html=True)
 
-    proc_gen = st.slider("Processor Generation", min_value=7, max_value=14,
-                          value=12, step=1,
-                          help="e.g. 12 = 12th Gen Intel / 7th Gen AMD Ryzen")
-
-    cpu_cores = st.selectbox("CPU Cores", [2, 4, 6, 8, 10, 12, 14, 16, 24],
-                              index=3, format_func=lambda x: f"{x} Cores")
+    # CPU list filtered by brand
+    cpu_keys    = [k for k in CPU_OPTIONS if "Apple" in k] if brand == "Apple" \
+                  else [k for k in CPU_OPTIONS if "Apple" not in k]
+    default_cpu = "Apple M2 (8 Cores)" if brand == "Apple" else "Intel Core i5 - 12th Gen (8 Cores)"
+    cpu_label   = st.selectbox("CPU Model", cpu_keys,
+                                index=cpu_keys.index(default_cpu) if default_cpu in cpu_keys else 0)
+    proc_gen, cpu_cores = CPU_OPTIONS[cpu_label]
 
     spec_rating = st.slider("Overall Spec Rating", min_value=50.0, max_value=90.0,
                              value=70.0, step=0.5,
@@ -340,11 +398,11 @@ with col_mid:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── GPU card ──
-    st.markdown('<div class="card"><div class="card-title">🎮 &nbsp;Graphics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-title">🎮 &nbsp;Graphics Card</div>', unsafe_allow_html=True)
 
-    gpu_label = st.selectbox("GPU / VRAM", list(GPU_VRAM_OPTIONS.keys()), index=2)
-    gpu_vram  = GPU_VRAM_OPTIONS[gpu_label]
-    has_dedicated_gpu = 1 if gpu_vram > 0 else 0
+    gpu_options = GPU_OPTIONS_APPLE if brand == "Apple" else GPU_OPTIONS_DEFAULT
+    gpu_label   = st.selectbox("GPU Model", list(gpu_options.keys()), index=0)
+    gpu_vram, has_dedicated_gpu = gpu_options[gpu_label]
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -356,7 +414,7 @@ with col_mid:
                                  format_func=lambda x: f'{x}"')
 
     res_label = st.selectbox("Resolution", list(RESOLUTIONS.keys()),
-                              index=list(RESOLUTIONS.keys()).index("1920 × 1080 (FHD)"))
+                              index=list(RESOLUTIONS.keys()).index("1920 x 1080 (FHD)"))
     res_w, res_h = RESOLUTIONS[res_label]
     total_pixels = res_w * res_h
 
@@ -369,17 +427,16 @@ with col_right:
     st.markdown('<div class="card"><div class="card-title">📋 &nbsp;Configuration Summary</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div style="line-height: 2; color: #cbd5e1; font-size: 0.88rem;">
-    <b style="color:#a5b4fc">Brand</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{brand}<br>
-    <b style="color:#a5b4fc">OS</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{os_family}<br>
-    <b style="color:#a5b4fc">CPU Gen</b> &nbsp;&nbsp;&nbsp;&nbsp;{proc_gen}th Gen<br>
-    <b style="color:#a5b4fc">Cores</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cpu_cores}<br>
-    <b style="color:#a5b4fc">RAM</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ram_gb} GB {ram_type}<br>
-    <b style="color:#a5b4fc">Storage</b> &nbsp;&nbsp;&nbsp;&nbsp;{STORAGE_LABELS[storage_val]} {storage_type}<br>
-    <b style="color:#a5b4fc">GPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{gpu_label}<br>
-    <b style="color:#a5b4fc">Display</b> &nbsp;&nbsp;&nbsp;&nbsp;{display_size}" — {res_w}×{res_h}<br>
-    <b style="color:#a5b4fc">Rating</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{spec_rating}<br>
-    <b style="color:#a5b4fc">Warranty</b> &nbsp;&nbsp;{warranty} Yr
+    <div style="line-height: 2; color: #cbd5e1; font-size: 0.85rem;">
+    <b style="color:#a5b4fc">Brand</b> &nbsp;&nbsp;&nbsp;&nbsp;{brand}<br>
+    <b style="color:#a5b4fc">OS</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{os_family}<br>
+    <b style="color:#a5b4fc">CPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cpu_label}<br>
+    <b style="color:#a5b4fc">RAM</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ram_gb} GB {ram_type}<br>
+    <b style="color:#a5b4fc">Storage</b> {STORAGE_LABELS[storage_val]} {storage_type}<br>
+    <b style="color:#a5b4fc">GPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{gpu_label}<br>
+    <b style="color:#a5b4fc">Display</b> {display_size}" - {res_w}x{res_h}<br>
+    <b style="color:#a5b4fc">Rating</b> &nbsp;{spec_rating}<br>
+    <b style="color:#a5b4fc">Warranty</b> {warranty} Yr
     </div>
     """, unsafe_allow_html=True)
 
@@ -407,21 +464,22 @@ with col_right:
         }
 
         with st.spinner("Fetching live rates & calculating..."):
-            price_inr = predict_price(sample)
-            INR_TO_PKR, INR_TO_USD, rate_time, is_live = get_live_rates()
+            price_usd = predict_price(sample)
+            USD_TO_PKR, rate_time, is_live = get_live_rates()
 
-        price_pkr = price_inr * INR_TO_PKR
-        price_usd = price_inr * INR_TO_USD
+        price_pkr = price_usd * USD_TO_PKR
 
-        low_pkr  = max(0, price_pkr * 0.90)
-        high_pkr = price_pkr * 1.10
+        low_usd  = max(0, price_usd * 0.90)
+        high_usd = price_usd * 1.10
+        low_pkr  = low_usd  * USD_TO_PKR
+        high_pkr = high_usd * USD_TO_PKR
 
-        # ── Price tier (based on PKR) ──
-        if price_pkr < 100_000:
+        # Price tier (based on USD)
+        if price_usd < 400:
             tier, tier_color, tier_icon = "Budget", "#34d399", "💚"
-        elif price_pkr < 200_000:
+        elif price_usd < 900:
             tier, tier_color, tier_icon = "Mid-Range", "#60a5fa", "💙"
-        elif price_pkr < 350_000:
+        elif price_usd < 1600:
             tier, tier_color, tier_icon = "Premium", "#c084fc", "💜"
         else:
             tier, tier_color, tier_icon = "Flagship", "#f472b6", "🩷"
@@ -432,7 +490,7 @@ with col_right:
         st.markdown(f"""
         <div class="result-box">
             <div class="result-label">Estimated Market Price</div>
-            <div class="result-price">PKR {price_pkr:,.0f}</div>
+            <div class="result-price">$ {price_usd:,.0f} USD</div>
             <div style="margin-top:0.8rem;">
                 <span style="background:rgba(0,0,0,0.3); border:1px solid {tier_color};
                              border-radius:999px; padding:0.2rem 0.9rem;
@@ -441,18 +499,14 @@ with col_right:
                 </span>
             </div>
             <div class="result-range">
-                PKR range &nbsp;|&nbsp; {low_pkr:,.0f} &mdash; {high_pkr:,.0f}
+                USD range &nbsp;|&nbsp; ${low_usd:,.0f} &mdash; ${high_usd:,.0f}
             </div>
             <div style="margin-top:1.2rem; display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
                 <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
                             border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
-                    <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">INDIAN RUPEE</div>
-                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">INR {price_inr:,.0f}</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
-                            border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
-                    <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">US DOLLAR</div>
-                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">$ {price_usd:,.0f}</div>
+                    <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">PAKISTANI RUPEE</div>
+                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">PKR {price_pkr:,.0f}</div>
+                    <div style="color:#64748b; font-size:0.65rem;">{low_pkr:,.0f} - {high_pkr:,.0f}</div>
                 </div>
             </div>
             <div style="margin-top:0.9rem; display:flex; align-items:center;
@@ -463,7 +517,7 @@ with col_right:
                     {rate_badge_text}
                 </span>
                 <span style="color:#475569; font-size:0.72rem;">
-                    1 INR = {INR_TO_PKR:.4f} PKR &bull; $ {INR_TO_USD:.5f} &nbsp;|&nbsp; {rate_time}
+                    1 USD = {USD_TO_PKR:.2f} PKR &nbsp;|&nbsp; {rate_time}
                 </span>
             </div>
         </div>
