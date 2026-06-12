@@ -301,7 +301,7 @@ hr {
 .block-container {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
-    max-width: 1050px !important;
+    max-width: 1250px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -482,7 +482,7 @@ st.markdown("""
 # ──────────────────────────────────────────────────────────────────────────────
 #  MAIN LAYOUT — 3 columns
 # ──────────────────────────────────────────────────────────────────────────────
-col_left, col_mid, col_right = st.columns([1.1, 1.1, 1.0], gap="large")
+col_left, col_mid, col_right = st.columns([1.0, 1.0, 1.4], gap="large")
 
 # ╔══════════════════════════════╗
 # ║   LEFT — Brand & Memory      ║
