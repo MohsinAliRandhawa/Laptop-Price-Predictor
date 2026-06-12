@@ -191,7 +191,7 @@ hr {
 #  LOAD MODEL BUNDLE
 # ──────────────────────────────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="Loading model...")
-def load_bundle(path="laptop_price_model.pkl", _cache_buster=2):
+def load_bundle(path="laptop_price_model.pkl", cache_buster=4):
     with open(path, "rb") as f:
         return pickle.load(f)
 
@@ -572,21 +572,21 @@ with info_col1:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Model</div>
-        Random Forest Regressor<br>300 trees &bull; R² = 0.74
+        Random Forest Regressor<br>300 trees &bull; R² = 0.73
     </div>""", unsafe_allow_html=True)
 
 with info_col2:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Training Data</div>
-        5,174 global laptops<br>across 4 datasets
+        5,480 global laptops<br>across 5 datasets
     </div>""", unsafe_allow_html=True)
 
 with info_col3:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Accuracy</div>
-        Avg. error ~ $264 USD<br>within &plusmn;10% range shown
+        Avg. error ~ $274 USD<br>within &plusmn;10% range shown
     </div>""", unsafe_allow_html=True)
 
 st.markdown("""
