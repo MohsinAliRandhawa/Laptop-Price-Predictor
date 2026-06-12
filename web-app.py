@@ -1,5 +1,7 @@
 import pickle
 import re
+import requests
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -189,7 +191,6 @@ hr {
 #  LOAD MODEL BUNDLE
 # ──────────────────────────────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="Loading model...")
-#hello
 def load_bundle(path="laptop_price_model.pkl"):
     with open(path, "rb") as f:
         return pickle.load(f)
@@ -210,6 +211,34 @@ def predict_price(sample: dict) -> float:
         val = str(row[col].iloc[0])
         row[col] = le.transform([val])[0] if val in le.classes_ else -1
     return float(model.predict(row[features])[0])
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  LIVE CURRENCY RATES  (cached 1 hour — free API, no key needed)
+# ──────────────────────────────────────────────────────────────────────────────
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_live_rates():
+    """
+    Fetch live INR -> PKR and INR -> USD rates from open.er-api.com.
+    Falls back to hardcoded rates if internet/API is unavailable.
+    Returns: (pkr_rate, usd_rate, fetched_at, is_live)
+    """
+    FALLBACK_PKR = 3.52
+    FALLBACK_USD = 0.012
+    try:
+        resp = requests.get(
+            "https://open.er-api.com/v6/latest/INR",
+            timeout=5
+        )
+        data = resp.json()
+        if data.get("result") == "success":
+            pkr = data["rates"]["PKR"]
+            usd = data["rates"]["USD"]
+            fetched_at = datetime.utcnow().strftime("%d %b %Y, %H:%M UTC")
+            return pkr, usd, fetched_at, True
+    except Exception:
+        pass
+    # Fallback if API fails
+    return FALLBACK_PKR, FALLBACK_USD, "Unavailable (using fallback)", False
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  STATIC OPTION LISTS  (derived from training data knowledge)
@@ -377,26 +406,37 @@ with col_right:
             "OS_Family"        : os_family,
         }
 
-        with st.spinner("Calculating..."):
-            price = predict_price(sample)
+        with st.spinner("Fetching live rates & calculating..."):
+            price_inr = predict_price(sample)
+            INR_TO_PKR, INR_TO_USD, rate_time, is_live = get_live_rates()
 
-        # ── Price band context ──
-        if price < 30_000:
+        price_pkr = price_inr * INR_TO_PKR
+        price_usd = price_inr * INR_TO_USD
+
+        low_pkr  = max(0, price_pkr * 0.90)
+        high_pkr = price_pkr * 1.10
+
+        # ── Price tier (based on PKR) ──
+        if price_pkr < 100_000:
             tier, tier_color, tier_icon = "Budget", "#34d399", "💚"
-        elif price < 60_000:
+        elif price_pkr < 200_000:
             tier, tier_color, tier_icon = "Mid-Range", "#60a5fa", "💙"
-        elif price < 100_000:
+        elif price_pkr < 350_000:
             tier, tier_color, tier_icon = "Premium", "#c084fc", "💜"
         else:
             tier, tier_color, tier_icon = "Flagship", "#f472b6", "🩷"
 
-        low  = max(0, price * 0.90)
-        high = price * 1.10
+        rate_badge_color = "#34d399" if is_live else "#f59e0b"
+        rate_badge_text  = "LIVE" if is_live else "OFFLINE"
 
         st.markdown(f"""
         <div class="result-box">
             <div class="result-label">Estimated Market Price</div>
-            <div class="result-price">Rs. {price:,.0f}</div>
+
+            <!-- Primary: PKR -->
+            <div class="result-price">PKR {price_pkr:,.0f}</div>
+
+            <!-- Tier badge -->
             <div style="margin-top:0.8rem;">
                 <span style="background:rgba(0,0,0,0.3); border:1px solid {tier_color};
                              border-radius:999px; padding:0.2rem 0.9rem;
@@ -404,8 +444,37 @@ with col_right:
                     {tier_icon} {tier} Tier
                 </span>
             </div>
+
+            <!-- PKR range -->
             <div class="result-range">
-                Likely range &nbsp;|&nbsp; Rs. {low:,.0f} &mdash; Rs. {high:,.0f}
+                PKR range &nbsp;|&nbsp; {low_pkr:,.0f} &mdash; {high_pkr:,.0f}
+            </div>
+
+            <!-- Secondary conversions -->
+            <div style="margin-top:1.2rem; display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+                            border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
+                    <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">INDIAN RUPEE</div>
+                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">INR {price_inr:,.0f}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+                            border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
+                    <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">US DOLLAR</div>
+                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">${price_usd:,.0f}</div>
+                </div>
+            </div>
+
+            <!-- Live rate info -->
+            <div style="margin-top:0.9rem; display:flex; align-items:center;
+                        justify-content:center; gap:0.5rem; flex-wrap:wrap;">
+                <span style="background:rgba(0,0,0,0.3); border:1px solid {rate_badge_color};
+                             border-radius:999px; padding:0.15rem 0.6rem;
+                             color:{rate_badge_color}; font-size:0.7rem; font-weight:700;">
+                    {rate_badge_text}
+                </span>
+                <span style="color:#475569; font-size:0.72rem;">
+                    1 INR = {INR_TO_PKR:.4f} PKR &bull; ${{INR_TO_USD:.5f}} &nbsp;|&nbsp; {rate_time}
+                </span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -447,11 +516,11 @@ with info_col3:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Accuracy</div>
-        Avg. error ~ Rs. 12,168<br>within ±10% range shown
+        Avg. error ~ PKR 42,832<br>within &plusmn;10% range shown
     </div>""", unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align:center; color:#334155; font-size:0.76rem; margin-top:1rem; padding-bottom:1.5rem;">
-    Prices are estimates based on Indian market data. Actual prices may vary by retailer.
+    Prices converted from Indian market data. 1 INR = 3.52 PKR = $0.012 USD. Rates may vary.
 </div>
 """, unsafe_allow_html=True)
