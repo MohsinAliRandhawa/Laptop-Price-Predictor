@@ -391,10 +391,6 @@ with col_mid:
                                 index=cpu_keys.index(default_cpu) if default_cpu in cpu_keys else 0)
     proc_gen, cpu_cores = CPU_OPTIONS[cpu_label]
 
-    spec_rating = st.slider("Overall Spec Rating", min_value=50.0, max_value=90.0,
-                             value=70.0, step=0.5,
-                             help="Aggregate performance score (50 = budget, 90 = flagship)")
-
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── GPU card ──
@@ -424,6 +420,15 @@ with col_mid:
 # ║   RIGHT — Summary & Result   ║
 # ╚══════════════════════════════╝
 with col_right:
+    # ── Auto-calculate Spec Rating ──
+    score = 50.0
+    score += min(ram_gb / 64 * 15, 15)
+    score += min(storage_val / 2048 * 10, 10)
+    score += min(gpu_vram / 16 * 10, 10)
+    score += min(proc_gen / 14 * 8, 8)
+    score += min(cpu_cores / 24 * 7, 7)
+    spec_rating = round(min(score, 90.0), 1)
+
     st.markdown('<div class="card"><div class="card-title">📋 &nbsp;Configuration Summary</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
@@ -546,25 +551,25 @@ with info_col1:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Model</div>
-        Random Forest Regressor<br>300 trees &bull; R² = 0.86
+        Random Forest Regressor<br>300 trees &bull; R² = 0.74
     </div>""", unsafe_allow_html=True)
 
 with info_col2:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Training Data</div>
-        893 Indian market laptops<br>across 15+ brands
+        5,174 global laptops<br>across 4 datasets
     </div>""", unsafe_allow_html=True)
 
 with info_col3:
     st.markdown("""
     <div style="text-align:center; color:#475569; font-size:0.82rem;">
         <div style="color:#818cf8; font-weight:600; margin-bottom:0.3rem;">Accuracy</div>
-        Avg. error ~ PKR 42,832<br>within &plusmn;10% range shown
+        Avg. error ~ $264 USD<br>within &plusmn;10% range shown
     </div>""", unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align:center; color:#334155; font-size:0.76rem; margin-top:1rem; padding-bottom:1.5rem;">
-    Prices converted from Indian market data. 1 INR = 3.52 PKR = $0.012 USD. Rates may vary.
+    Prices predicted natively in USD. Conversion rates applied dynamically via open.er-api.com.
 </div>
 """, unsafe_allow_html=True)
