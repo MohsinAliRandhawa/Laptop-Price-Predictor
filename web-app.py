@@ -432,11 +432,7 @@ with col_right:
         st.markdown(f"""
         <div class="result-box">
             <div class="result-label">Estimated Market Price</div>
-
-            <!-- Primary: PKR -->
             <div class="result-price">PKR {price_pkr:,.0f}</div>
-
-            <!-- Tier badge -->
             <div style="margin-top:0.8rem;">
                 <span style="background:rgba(0,0,0,0.3); border:1px solid {tier_color};
                              border-radius:999px; padding:0.2rem 0.9rem;
@@ -444,13 +440,9 @@ with col_right:
                     {tier_icon} {tier} Tier
                 </span>
             </div>
-
-            <!-- PKR range -->
             <div class="result-range">
                 PKR range &nbsp;|&nbsp; {low_pkr:,.0f} &mdash; {high_pkr:,.0f}
             </div>
-
-            <!-- Secondary conversions -->
             <div style="margin-top:1.2rem; display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
                 <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
                             border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
@@ -460,11 +452,9 @@ with col_right:
                 <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
                             border-radius:12px; padding:0.6rem 1.2rem; text-align:center;">
                     <div style="color:#94a3b8; font-size:0.72rem; letter-spacing:0.08em;">US DOLLAR</div>
-                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">${price_usd:,.0f}</div>
+                    <div style="color:#e2e8f0; font-size:1.1rem; font-weight:700;">$ {price_usd:,.0f}</div>
                 </div>
             </div>
-
-            <!-- Live rate info -->
             <div style="margin-top:0.9rem; display:flex; align-items:center;
                         justify-content:center; gap:0.5rem; flex-wrap:wrap;">
                 <span style="background:rgba(0,0,0,0.3); border:1px solid {rate_badge_color};
@@ -473,7 +463,7 @@ with col_right:
                     {rate_badge_text}
                 </span>
                 <span style="color:#475569; font-size:0.72rem;">
-                    1 INR = {INR_TO_PKR:.4f} PKR &bull; ${{INR_TO_USD:.5f}} &nbsp;|&nbsp; {rate_time}
+                    1 INR = {INR_TO_PKR:.4f} PKR &bull; $ {INR_TO_USD:.5f} &nbsp;|&nbsp; {rate_time}
                 </span>
             </div>
         </div>
