@@ -110,32 +110,38 @@ html, body, [class*="css"] {
     letter-spacing: -0.01em;
 }
 
-/* ── Section cards ── */
-.card {
+/* ── Section Headers ── */
+.section-header {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-left: 4px solid #8b5cf6;
+    border-radius: 4px 12px 12px 4px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    opacity: 0.95;
+    text-transform: uppercase;
+}
+
+/* ── Summary Card ── */
+.summary-card {
     background: rgba(9, 9, 11, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.3);
     border-radius: 20px;
-    padding: 2rem;
+    padding: 1.8rem;
     margin-bottom: 1.5rem;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
-}
-.card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 10px 40px rgba(255,255,255,0.02);
-}
-.card-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: #ffffff;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    opacity: 0.9;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.5);
 }
 
 /* ── Labels ── */
@@ -482,7 +488,7 @@ col_left, col_mid, col_right = st.columns([1.1, 1.1, 1.0], gap="large")
 # ║   LEFT — Brand & Memory      ║
 # ╚══════════════════════════════╝
 with col_left:
-    st.markdown('<div class="card"><div class="card-title">🏷️ &nbsp;Brand & Identity</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><div class="section-title">🏷️ &nbsp;Brand & Identity</div></div>', unsafe_allow_html=True)
 
     brand = st.selectbox("Brand", BRANDS, index=BRANDS.index("Asus"))
 
@@ -495,10 +501,8 @@ with col_left:
     warranty = st.selectbox("Warranty (Years)", [1, 2, 3], index=0,
                              format_func=lambda x: f"{x} Year{'s' if x > 1 else ''}")
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
     # ── Memory card ──
-    st.markdown('<div class="card"><div class="card-title">🧠 &nbsp;Memory & Storage</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><div class="section-title">🧠 &nbsp;Memory & Storage</div></div>', unsafe_allow_html=True)
 
     ram_gb = st.selectbox("RAM", RAM_OPTIONS, index=2,
                            format_func=lambda x: f"{x} GB")
@@ -510,13 +514,11 @@ with col_left:
 
     storage_type = st.selectbox("Storage Type", STORAGE_TYPES, index=0)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # ╔══════════════════════════════╗
 # ║   MIDDLE — CPU & GPU         ║
 # ╚══════════════════════════════╝
 with col_mid:
-    st.markdown('<div class="card"><div class="card-title">⚡ &nbsp;Processor</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><div class="section-title">⚡ &nbsp;Processor</div></div>', unsafe_allow_html=True)
 
     # CPU list filtered by brand
     cpu_keys    = [k for k in CPU_OPTIONS if "Apple" in k] if brand == "Apple" \
@@ -526,19 +528,15 @@ with col_mid:
                                 index=cpu_keys.index(default_cpu) if default_cpu in cpu_keys else 0)
     proc_gen, cpu_cores = CPU_OPTIONS[cpu_label]
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
     # ── GPU card ──
-    st.markdown('<div class="card"><div class="card-title">🎮 &nbsp;Graphics Card</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><div class="section-title">🎮 &nbsp;Graphics Card</div></div>', unsafe_allow_html=True)
 
     gpu_options = GPU_OPTIONS_APPLE if brand == "Apple" else GPU_OPTIONS_DEFAULT
     gpu_label   = st.selectbox("GPU Model", list(gpu_options.keys()), index=0)
     gpu_vram, has_dedicated_gpu = gpu_options[gpu_label]
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
     # ── Display card ──
-    st.markdown('<div class="card"><div class="card-title">🖥️ &nbsp;Display</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header"><div class="section-title">🖥️ &nbsp;Display</div></div>', unsafe_allow_html=True)
 
     display_size = st.selectbox("Screen Size (inches)", DISPLAY_SIZES,
                                  index=DISPLAY_SIZES.index(15.6),
@@ -548,8 +546,6 @@ with col_mid:
                               index=list(RESOLUTIONS.keys()).index("1920 x 1080 (FHD)"))
     res_w, res_h = RESOLUTIONS[res_label]
     total_pixels = res_w * res_h
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ╔══════════════════════════════╗
 # ║   RIGHT — Summary & Result   ║
@@ -564,23 +560,22 @@ with col_right:
     score += min(cpu_cores / 24 * 7, 7)
     spec_rating = round(min(score, 90.0), 1)
 
-    st.markdown('<div class="card"><div class="card-title">📋 &nbsp;Configuration Summary</div>', unsafe_allow_html=True)
-
     st.markdown(f"""
-    <div style="line-height: 2; color: #cbd5e1; font-size: 0.85rem;">
-    <b style="color:#a5b4fc">Brand</b> &nbsp;&nbsp;&nbsp;&nbsp;{brand}<br>
-    <b style="color:#a5b4fc">OS</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{os_family}<br>
-    <b style="color:#a5b4fc">CPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cpu_label}<br>
-    <b style="color:#a5b4fc">RAM</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ram_gb} GB {ram_type}<br>
-    <b style="color:#a5b4fc">Storage</b> {STORAGE_LABELS[storage_val]} {storage_type}<br>
-    <b style="color:#a5b4fc">GPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{gpu_label}<br>
-    <b style="color:#a5b4fc">Display</b> {display_size}" - {res_w}x{res_h}<br>
-    <b style="color:#a5b4fc">Rating</b> &nbsp;{spec_rating}<br>
-    <b style="color:#a5b4fc">Warranty</b> {warranty} Yr
+    <div class="summary-card">
+        <div class="section-title" style="margin-bottom:1rem; color:#8b5cf6;">📋 &nbsp;Configuration Summary</div>
+        <div style="line-height: 2.2; color: #e2e8f0; font-size: 0.9rem;">
+            <b style="color:#a5b4fc">Brand</b> &nbsp;&nbsp;&nbsp;&nbsp;{brand}<br>
+            <b style="color:#a5b4fc">OS</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{os_family}<br>
+            <b style="color:#a5b4fc">CPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cpu_label}<br>
+            <b style="color:#a5b4fc">RAM</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ram_gb} GB {ram_type}<br>
+            <b style="color:#a5b4fc">Storage</b> {STORAGE_LABELS[storage_val]} {storage_type}<br>
+            <b style="color:#a5b4fc">GPU</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{gpu_label}<br>
+            <b style="color:#a5b4fc">Display</b> {display_size}" - {res_w}x{res_h}<br>
+            <b style="color:#a5b4fc">Rating</b> &nbsp;{spec_rating}<br>
+            <b style="color:#a5b4fc">Warranty</b> {warranty} Yr
+        </div>
     </div>
     """, unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
     # ── Predict button ──
     predict_clicked = st.button("🔮  Predict Price", use_container_width=True)
