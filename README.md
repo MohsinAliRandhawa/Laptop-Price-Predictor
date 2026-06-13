@@ -116,8 +116,8 @@ Raw CSV Datasets (5 sources)
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+git clone https://github.com/MohsinAliRandhawa/Laptop-Price-Predictor.git
+cd Laptop-Price-Predictor
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -147,9 +147,3 @@ streamlit run web-app.py
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/mohsinalirandhawa/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/MohsinAliRandhawa)
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
