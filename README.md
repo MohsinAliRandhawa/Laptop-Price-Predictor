@@ -8,7 +8,7 @@
 
 > An end-to-end machine learning web application that predicts real-time laptop market prices using a Random Forest model trained on **5,480 global laptop listings** across 5 international datasets — with live currency conversion via REST API.
 
-🔗 **[Live Demo → Click Here](YOUR_STREAMLIT_URL_HERE)**
+🔗 **[Live Demo → Click Here](https://laptoppricepredictormodel.streamlit.app/)**
 
 ---
 
@@ -17,7 +17,10 @@
 <!-- Upload a screenshot of your website to your GitHub repo      -->
 <!-- then replace the URL below with the actual image path        -->
 <!-- ============================================================ -->
-![App Screenshot](YOUR_SCREENSHOT_URL_HERE)
+![App Screenshot](web_app.png)
+![App Screenshot](Predict_price.png)
+![App Screenshot](architecture_diagram.png)
+
 
 ---
 
@@ -119,9 +122,6 @@ cd YOUR_REPO_NAME
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. (Optional) Re-train the model from scratch
-python training.py
-
 # 4. Launch the web app
 streamlit run web-app.py
 ```
@@ -143,10 +143,10 @@ streamlit run web-app.py
 
 ## 👤 Author
 
-**YOUR NAME HERE** — DevOps Engineer | ML Enthusiast
+**Mohsin Ali Randhawa** — DevOps Enthusiast
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](YOUR_LINKEDIN_URL_HERE)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](YOUR_GITHUB_URL_HERE)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/mohsinalirandhawa/)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/MohsinAliRandhawa)
 
 ---
 
