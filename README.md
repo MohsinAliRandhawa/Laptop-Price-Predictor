@@ -17,7 +17,7 @@
 <!-- Upload a screenshot of your website to your GitHub repo      -->
 <!-- then replace the URL below with the actual image path        -->
 <!-- ============================================================ -->
-![App Screenshot](web_app.png)
+![App Screenshot](web_page.png)
 ![App Screenshot](Predict_price.png)
 ![App Screenshot](architecture_diagram.png)
 
